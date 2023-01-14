@@ -1,4 +1,4 @@
-package com.example.drmpjct.ui.dashboard;
+package com.example.drmpjct.ui.cam;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -10,22 +10,22 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.drmpjct.databinding.FragmentDashboardBinding;
+import com.example.drmpjct.databinding.FragmentCamBinding;
 
-public class DashboardFragment extends Fragment {
+public class CamFragment extends Fragment {
 
-    private FragmentDashboardBinding binding;
+    private FragmentCamBinding binding;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        DashboardViewModel dashboardViewModel =
-                new ViewModelProvider(this).get(DashboardViewModel.class);
+        CamViewModel camViewModel =
+                new ViewModelProvider(this).get(CamViewModel.class);
 
-        binding = FragmentDashboardBinding.inflate(inflater, container, false);
+        binding = FragmentCamBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
         final TextView textView = binding.textDashboard;
-        dashboardViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+        camViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
         return root;
     }
 
