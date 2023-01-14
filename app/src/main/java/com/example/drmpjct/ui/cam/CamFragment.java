@@ -24,8 +24,6 @@ public class CamFragment extends Fragment {
         binding = FragmentCamBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        final TextView textView = binding.textDashboard;
-        camViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
         return root;
     }
 

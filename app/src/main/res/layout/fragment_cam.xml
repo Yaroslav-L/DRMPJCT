@@ -6,17 +6,72 @@
     android:layout_height="match_parent"
     tools:context=".ui.cam.CamFragment">
 
-    <TextView
-        android:id="@+id/text_dashboard"
+    <ImageButton
+        android:id="@+id/imgbtn_gallery"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginStart="25dp"
+        android:layout_marginEnd="50dp"
+        android:layout_marginBottom="50dp"
+        android:backgroundTint="#00000000"
+        android:scaleType="fitXY"
+        android:src="@drawable/ic_galery_button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/imgbtn_cam"
+        app:layout_constraintTop_toBottomOf="@+id/txt_cal_result" />
+
+    <ImageView
+        android:id="@+id/imgview_photo"
         android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:src="@drawable/photo_place"
+        app:layout_constraintBottom_toTopOf="@+id/txt_cal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/txt_cal_result"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:textAlignment="center"
+        android:text="Неизвестно"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.502"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txt_cal" />
+
+    <TextView
+        android:id="@+id/txt_cal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="arial"
+        android:text="Калорийность"
+        android:textAllCaps="false"
+        android:textColor="@color/black"
         android:textSize="20sp"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:id="@+id/imgbtn_cam"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginStart="50dp"
+        android:layout_marginEnd="25dp"
+        android:layout_marginBottom="50dp"
+        android:backgroundTint="#00000000"
+        android:scaleType="fitXY"
+        android:src="@drawable/ic_cam_button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/imgbtn_gallery"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txt_cal_result" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
