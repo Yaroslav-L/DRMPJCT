@@ -64,6 +64,7 @@
         android:layout_height="100dp"
         android:layout_marginBottom="50dp"
         android:backgroundTint="#00000000"
+        android:onClick="btncamclc"
         android:scaleType="fitXY"
         android:src="@drawable/ic_cam_button"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -72,11 +73,12 @@
         app:layout_constraintTop_toBottomOf="@+id/txt_cal_result" />
 
     <ImageButton
-        android:id="@+id/imageButton"
+        android:id="@+id/imgbtn_analysis"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_marginBottom="50dp"
         android:backgroundTint="#00000000"
+        android:onClick="btnanalclc"
         android:scaleType="fitXY"
         android:src="@drawable/ic_analysis_button"
         app:layout_constraintBottom_toBottomOf="parent"
