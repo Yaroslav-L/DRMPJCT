@@ -1,10 +1,12 @@
 package com.example.drmpjct;
 import static android.graphics.ImageFormat.*;
 
+import android.Manifest;
 import android.content.Context;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.pm.PackageManager;
 import android.graphics.ImageFormat;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCharacteristics;
@@ -21,6 +23,7 @@ import android.view.Display;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -42,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
     @RequiresApi(api = Build.VERSION_CODES.M)
 
     private ActivityMainBinding binding;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,9 +68,16 @@ public class MainActivity extends AppCompatActivity {
                 if (Faceing == CameraCharacteristics.LENS_FACING_BACK) {
                     Log.i(LOG_TAG, "Camera with: ID " + cameraID + "is BACK CAMERA ");
                 }
+                if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
+                        ||
+                        (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
+                ) {
+                    requestPermissions(new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                }
+
 
                 Size[] sizesJPEG;
-                sizesJPEG = configurationMap.getHighSpeedVideoSizesFor(ImageFormat.JPEG);
+                sizesJPEG = configurationMap.getOutputSizes(JPEG);
 
                 if (sizesJPEG != null) {
                     for (Size item : sizesJPEG) {
@@ -100,6 +111,6 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
-    }
 
+    }
 }
