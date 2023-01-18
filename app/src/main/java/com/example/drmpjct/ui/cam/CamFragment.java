@@ -16,10 +16,8 @@ public class CamFragment extends Fragment {
 
     private FragmentCamBinding binding;
 
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
-        CamViewModel camViewModel =
-                new ViewModelProvider(this).get(CamViewModel.class);
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        CamViewModel camViewModel = new ViewModelProvider(this).get(CamViewModel.class);
 
         binding = FragmentCamBinding.inflate(inflater, container, false);
         View root = binding.getRoot();

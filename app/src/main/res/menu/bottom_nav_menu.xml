@@ -4,7 +4,8 @@
     <item
         android:id="@+id/navigation_plan"
         android:icon="@drawable/ic_plan"
-        android:title="@string/title_plan" />
+        android:title="@string/title_plan"
+        android:visible="false" />
 
     <item
         android:id="@+id/navigation_cam"

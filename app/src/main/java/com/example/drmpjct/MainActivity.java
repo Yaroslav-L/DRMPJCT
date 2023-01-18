@@ -25,6 +25,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.drmpjct.databinding.ActivityMainBinding;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -39,12 +40,14 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
     static final int GALLERY_REQUEST = 1;
     static final int CAMERA_REQUEST = 2;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +64,13 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
+        navController.navigate(R.id.navigation_cam);
+
+
+
     }
+
+
 
     //Обработка программно созданных страниц
     @Override
