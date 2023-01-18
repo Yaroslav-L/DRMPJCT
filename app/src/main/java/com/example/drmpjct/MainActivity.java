@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
+import android.graphics.drawable.BitmapDrawable;
 import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
@@ -17,8 +18,11 @@ import android.view.Display;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.navigation.NavController;
@@ -30,17 +34,32 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.drmpjct.databinding.ActivityMainBinding;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedOutputStream;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -48,10 +67,21 @@ public class MainActivity extends AppCompatActivity {
     static final int GALLERY_REQUEST = 1;
     static final int CAMERA_REQUEST = 2;
 
+    String btmpnm;
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
+                (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED) ||
+                (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)) {
+            requestPermissions(new String[]{Manifest.permission.CAMERA,Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.INTERNET}, 1);
+        }
+
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -66,11 +96,7 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(binding.navView, navController);
         navController.navigate(R.id.navigation_cam);
 
-
-
     }
-
-
 
     //Обработка программно созданных страниц
     @Override
@@ -106,11 +132,6 @@ public class MainActivity extends AppCompatActivity {
     //Оработчик кнопки галлерея
     public void btngalclc(View view){
 
-        //Выставление условий использования
-        if(ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
-        }
-
         //Создание и активация стрницы Галлерея
         Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
         photoPickerIntent.setType("image/*");
@@ -120,45 +141,59 @@ public class MainActivity extends AppCompatActivity {
     //Оработчик кнопки Камера
     public void btncamclc(View view) throws IOException {
 
-        //Выставление условий использования
-        if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
-                ||
-                (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)) {
-            requestPermissions(new String[]{Manifest.permission.CAMERA,Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
-        }
-
         //Создание и активация стрницы камеры
         Intent camIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         startActivityForResult(camIntent, CAMERA_REQUEST);
     }
 
     //Оработчик кнопки Анализ
-    public void btnanalclc(View view) throws IOException {
-/*
-        URL url = new URL("https://api.logmeal.es/v2/image/segmentation/complete");
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setRequestProperty("Authorization","Bearer "+"2c1cec738ff7a71c05d7d5409f6cfcab7aa07808");
-        conn.setRequestMethod("POST");
-        JSONObject jsonObject;
-        jsonObject.put("image",bitmap);
+    public void btnanalclc(View view) throws IOException, JSONException {
 
+        Bitmap bitmap = null;
+        ImageView imageView = (ImageView) findViewById(R.id.imgview_photo);
+        bitmap = ((BitmapDrawable)imageView.getDrawable()).getBitmap();
+        Time time = new Time();  time.setToNow();  btmpnm = String.valueOf(time);
+        OutputStream os = null;
+        try{
+            os = openFileOutput(btmpnm+".jpeg", MODE_PRIVATE);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, os);
+            os.flush();
+            os.close();
+        } catch (IOException e){e.printStackTrace();}
+        File file = new File("/data/data/com.example.drmpjct/files/"+btmpnm+".jpeg");
 
+        OkHttpClient client = new OkHttpClient().newBuilder().build();
+        MediaType mediaType = MediaType.parse("multipart/form-data");
+        RequestBody body = new MultipartBody.Builder().setType(MultipartBody.FORM)
+            .addFormDataPart("image",btmpnm+".jpeg",
+            RequestBody.create(MediaType.parse("application/octet-stream"),file))
+            .build();
+        Request request = new Request.Builder()
+            .url("https://api.logmeal.es/v2/image/recognition/complete/v1.0?skip_types=[1,3]&language=eng")
+            .method("POST", body)
+            .addHeader("Content-Type", "multipart/form-data")
+            .addHeader("Accept", "application/json")
+            .addHeader("Authorization", "Bearer e7bdfe531afc70e923531bb9a4d8c53b720bc752")
+            .build();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                e.printStackTrace();
+            }
 
-        conn.setR
-       // img = <'replace-with-path-to-image'>
-               // api_user_token = <'replace-with-your-api-user-token'>
-             //  headers = {'Authorization': 'Bearer ' + api_user_token:
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
 
-
-        //url = 'https://api.logmeal.es/v2/image/segmentation/complete'
-        resp = requests.post(url,files={'image': open(img, 'rb')},headers=headers);
-
-
-        url = 'https://api.logmeal.es/v2/recipe/nutritionalInfo'
-        resp = requests.post(url,json={'imageId': resp.json()['imageId']}, headers=headers)
-        print(resp.json())
-*/
+                String resStr = response.body().string();
+                JSONObject json;
+                try {
+                    json = new JSONObject(resStr);
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
+                System.out.println(json);
+            }
+        });
     }
-
 }
 
