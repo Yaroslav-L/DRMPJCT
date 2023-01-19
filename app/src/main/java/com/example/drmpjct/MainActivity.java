@@ -14,10 +14,12 @@ import android.os.Environment;
 import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.text.format.Time;
+import android.util.JsonReader;
 import android.view.Display;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -34,8 +36,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.drmpjct.databinding.ActivityMainBinding;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONStringer;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
@@ -51,6 +55,9 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -68,7 +75,8 @@ public class MainActivity extends AppCompatActivity {
     static final int CAMERA_REQUEST = 2;
 
     String btmpnm;
-
+    JSONObject jsonM;
+    String[] arrayList;
 
 
 
@@ -148,9 +156,10 @@ public class MainActivity extends AppCompatActivity {
 
     //Оработчик кнопки Анализ
     public void btnanalclc(View view) throws IOException, JSONException {
-
-        Bitmap bitmap = null;
         ImageView imageView = (ImageView) findViewById(R.id.imgview_photo);
+        Bitmap bitmap = null;
+
+
         bitmap = ((BitmapDrawable)imageView.getDrawable()).getBitmap();
         Time time = new Time();  time.setToNow();  btmpnm = String.valueOf(time);
         OutputStream os = null;
@@ -173,8 +182,10 @@ public class MainActivity extends AppCompatActivity {
             .method("POST", body)
             .addHeader("Content-Type", "multipart/form-data")
             .addHeader("Accept", "application/json")
-            .addHeader("Authorization", "Bearer e7bdfe531afc70e923531bb9a4d8c53b720bc752")
+            .addHeader("Authorization", "Bearer 0488c590e5b67df7b2b189d6b7517b7d550dcf83")
             .build();
+
+        final String[] txt2 = {""};
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
@@ -192,6 +203,72 @@ public class MainActivity extends AppCompatActivity {
                     throw new RuntimeException(e);
                 }
                 System.out.println(json);
+
+                String value;
+                try {
+                     value = json.getString("recognition_results");
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
+                System.out.println(value);
+
+                JSONArray jsonArray;
+                try {
+                     jsonArray = (JSONArray) json.get("recognition_results");
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
+                arrayList = new String[jsonArray.length()];
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject row = null;
+                    String name;
+                    try {
+                        row = jsonArray.getJSONObject(i);
+                        System.out.println(row);
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
+                    }
+                    try {
+                         name = row.getString("name");
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
+                    }
+
+                    arrayList[i]=name;
+
+                }
+
+
+                Map<String, String> map = new HashMap<>();
+                map.put("banana", "96 Ккал/100грм");
+                map.put("pomegranate", "52 Ккал/100грм");
+                map.put("walnuts", "656 Ккал/100грм");
+                map.put("cabbage", "27 Ккал/100грм");
+                map.put("suiker", "387 кКал/100грм");
+                map.put("cherry tomato", "15 ккал/100грм");
+                map.put("apple", "52 ккал/100грм");
+
+
+                String txt ="";
+                for (int i = 0; i < arrayList.length; i++) {
+                    System.out.println(arrayList[i]);
+                    map.get(arrayList[i]);
+                     txt =txt + arrayList[i]+" "+map.get(arrayList[i])+"\n";
+
+                }
+
+
+                String finalTxt = txt;
+                runOnUiThread(new Runnable() {
+
+                    @Override
+                    public void run() {
+
+                        TextView txtview = findViewById(R.id.txt_cal_result2);
+                        txtview.setText(finalTxt);
+
+                    }
+                });
             }
         });
     }

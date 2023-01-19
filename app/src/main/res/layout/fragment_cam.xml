@@ -24,6 +24,10 @@
         android:id="@+id/imgview_photo"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="200dp"
+        android:layout_marginBottom="10dp"
         android:src="@drawable/photo_place"
         app:layout_constraintBottom_toTopOf="@+id/txt_cal"
         app:layout_constraintEnd_toEndOf="parent"
@@ -34,7 +38,6 @@
         android:id="@+id/txt_cal_result"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Неизвестно"
         android:textColor="@color/black"
         android:textSize="16sp"
         android:textStyle="bold"
@@ -44,8 +47,34 @@
         app:layout_constraintTop_toBottomOf="@+id/txt_cal" />
 
     <TextView
+        android:id="@+id/txt_cal_result2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:textColor="@color/black"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/imgview_photo"
+        app:layout_constraintTop_toBottomOf="@+id/txt_cal2" />
+
+    <TextView
         android:id="@+id/txt_cal"
         android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="arial"
+        android:textAllCaps="false"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/txt_cal2"
+        android:layout_width="140dp"
         android:layout_height="wrap_content"
         android:fontFamily="arial"
         android:text="Калорийность"
@@ -55,8 +84,9 @@
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toEndOf="@+id/imgview_photo"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.120000005" />
 
     <ImageButton
         android:id="@+id/imgbtn_cam"
@@ -86,6 +116,5 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txt_cal_result" />
 
-    
 
 </androidx.constraintlayout.widget.ConstraintLayout>
