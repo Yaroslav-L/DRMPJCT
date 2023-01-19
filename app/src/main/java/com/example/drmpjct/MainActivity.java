@@ -164,17 +164,17 @@ public class MainActivity extends AppCompatActivity {
         Time time = new Time();  time.setToNow();  btmpnm = String.valueOf(time);
         OutputStream os = null;
         try{
-            os = openFileOutput(btmpnm+".jpeg", MODE_PRIVATE);
+            os = openFileOutput("000001.jpeg", MODE_PRIVATE);
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, os);
             os.flush();
             os.close();
         } catch (IOException e){e.printStackTrace();}
-        File file = new File("/data/data/com.example.drmpjct/files/"+btmpnm+".jpeg");
+        File file = new File("/data/data/com.example.drmpjct/files/000001.jpeg");
 
         OkHttpClient client = new OkHttpClient().newBuilder().build();
         MediaType mediaType = MediaType.parse("multipart/form-data");
         RequestBody body = new MultipartBody.Builder().setType(MultipartBody.FORM)
-            .addFormDataPart("image",btmpnm+".jpeg",
+            .addFormDataPart("image","000001.jpeg.jpeg",
             RequestBody.create(MediaType.parse("application/octet-stream"),file))
             .build();
         Request request = new Request.Builder()
