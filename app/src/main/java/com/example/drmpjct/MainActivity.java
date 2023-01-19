@@ -182,7 +182,7 @@ public class MainActivity extends AppCompatActivity {
             .method("POST", body)
             .addHeader("Content-Type", "multipart/form-data")
             .addHeader("Accept", "application/json")
-            .addHeader("Authorization", "Bearer 0488c590e5b67df7b2b189d6b7517b7d550dcf83")
+            .addHeader("Authorization", "Bearer 7a0fddb64c93afa91c6a8bb14229bb6d6e6978a5")
             .build();
 
         final String[] txt2 = {""};
